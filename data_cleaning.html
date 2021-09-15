@@ -248,6 +248,56 @@ glimpse(catch_clean)</code></pre>
 ## $ Coho    &lt;int&gt; 0, 0, 16, 11, 42, 24, 11, 1, 5, 8, 192, 161, 132, 139, 84, 107…
 ## $ Pink    &lt;int&gt; 0, 0, 0, 92, 0, 0, 8, 187, 529, 606, 996, 2218, 673, 1545, 204…
 ## $ Chum    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 1, 2, 0, 0, 0, 102, 343…</code></pre>
+<pre class="r"><code>catch_long &lt;- catch_clean %&gt;%
+  pivot_longer(cols = -c(Region, Year), names_to = &quot;species&quot;, values_to = &quot;catch&quot;)
+glimpse(catch_long)</code></pre>
+<pre><code>## Rows: 8,540
+## Columns: 4
+## $ Region  &lt;chr&gt; &quot;SSE&quot;, &quot;SSE&quot;, &quot;SSE&quot;, &quot;SSE&quot;, &quot;SSE&quot;, &quot;SSE&quot;, &quot;SSE&quot;, &quot;SSE&quot;, &quot;SSE&quot;,…
+## $ Year    &lt;int&gt; 1886, 1886, 1886, 1886, 1886, 1887, 1887, 1887, 1887, 1887, 18…
+## $ species &lt;chr&gt; &quot;Chinook&quot;, &quot;Sockeye&quot;, &quot;Coho&quot;, &quot;Pink&quot;, &quot;Chum&quot;, &quot;Chinook&quot;, &quot;Sock…
+## $ catch   &lt;int&gt; 0, 5, 0, 0, 0, 0, 155, 0, 0, 0, 0, 224, 16, 0, 0, 0, 182, 11, …</code></pre>
+<pre class="r"><code>catch_wide &lt;- catch_long %&gt;%
+  pivot_wider(names_from = Region, values_from = catch)
+head(catch_wide)</code></pre>
+<pre><code>## # A tibble: 6 × 20
+##    Year species   SSE   NSE   YAK   GSE   BER   COP   PWS   CKI   BRB   KSK
+##   &lt;int&gt; &lt;chr&gt;   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1  1886 Chinook     0     0    NA     0    NA    NA    NA    NA     0    NA
+## 2  1886 Sockeye     5   113    NA     0    NA    NA    NA    NA     0    NA
+## 3  1886 Coho        0     0    NA     0    NA    NA    NA    NA     0    NA
+## 4  1886 Pink        0     0    NA     0    NA    NA    NA    NA     0    NA
+## 5  1886 Chum        0     0    NA     0    NA    NA    NA    NA     0    NA
+## 6  1887 Chinook     0     0    NA     0    NA    NA    NA    NA     0    NA
+## # … with 8 more variables: YUK &lt;int&gt;, NRS &lt;int&gt;, KTZ &lt;int&gt;, KOD &lt;int&gt;,
+## #   CHG &lt;int&gt;, SOP &lt;int&gt;, ALU &lt;int&gt;, NOP &lt;int&gt;</code></pre>
+<pre class="r"><code>catch_long &lt;- catch_long %&gt;%
+  rename(catch_thousands = catch) %&gt;%
+  mutate(catch = catch_thousands * 1000)
+head(catch_long)</code></pre>
+<pre><code>## # A tibble: 6 × 5
+##   Region  Year species catch_thousands catch
+##   &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;             &lt;int&gt; &lt;dbl&gt;
+## 1 SSE     1886 Chinook               0     0
+## 2 SSE     1886 Sockeye               5  5000
+## 3 SSE     1886 Coho                  0     0
+## 4 SSE     1886 Pink                  0     0
+## 5 SSE     1886 Chum                  0     0
+## 6 SSE     1887 Chinook               0     0</code></pre>
+<pre class="r"><code>mean_region &lt;- catch_long %&gt;%
+  group_by(Region)%&gt;%
+  summarise(catch_mean = mean(catch))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>head(mean_region)</code></pre>
+<pre><code>## # A tibble: 6 × 2
+##   Region catch_mean
+##   &lt;chr&gt;       &lt;dbl&gt;
+## 1 ALU        40384.
+## 2 BER        16373.
+## 3 BRB      2709796.
+## 4 CHG       315487.
+## 5 CKI       683571.
+## 6 COP       179223.</code></pre>
 </div>
 
 
